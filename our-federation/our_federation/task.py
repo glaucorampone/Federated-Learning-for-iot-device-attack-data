@@ -8,7 +8,7 @@ from sklearn.ensemble import RandomForestClassifier
 fds = None  # Cache FederatedDataset
 
 
-def load_data(partition_id: int, num_partitions: int):
+def load_data(partition_id: int, num_partitions: int, subset: float = 1.0):
     # Only initialize `FederatedDataset` once
     global fds
     if fds is None:
@@ -19,6 +19,9 @@ def load_data(partition_id: int, num_partitions: int):
         )
 
     dataset = fds.load_partition(partition_id, "train").with_format("numpy")
+
+    subset_size = int(len(dataset) * subset)
+    dataset = dataset[:subset_size]
 
     X, y = dataset.remove_columns('label'), dataset["label"]
 
@@ -49,7 +52,7 @@ def set_model_params(model, params):
 
 
 def set_initial_params(model):
-    n_classes = 2  # MNIST has 10 classes
+    n_classes = 2  
     n_features = 115  # Number of features in dataset
     model.classes_ = np.array([i for i in range(n_classes)])
 

@@ -6,6 +6,7 @@ from sklearn.metrics import log_loss
 import numpy as np
 from flwr.client import ClientApp, NumPyClient
 from flwr.common import Context
+
 from our_federation.task import (
     get_model,
     get_model_params,
@@ -13,7 +14,6 @@ from our_federation.task import (
     set_initial_params,
     set_model_params,
 )
-
 
 class FlowerClient(NumPyClient):
     def __init__(self, model, X_train, X_test, y_train, y_test):
@@ -41,7 +41,7 @@ def client_fn(context: Context):
     partition_id = context.node_config["partition-id"]
     num_partitions = context.node_config["num-partitions"]
 
-    X_train, X_test, y_train, y_test = load_data(partition_id, num_partitions)
+    X_train, X_test, y_train, y_test = load_data(partition_id, num_partitions, 0.1)
 
     # Create RandomForestClassifier Model
     n_estimators = context.run_config["n_estimators"]
